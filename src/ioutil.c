@@ -277,33 +277,33 @@ FILE * open_log_file(char * __path, const char * __log, const char * __pre, cons
 			strcpy(file_prefix, __pre);
 		}
 		else {
-			sprintf(file_prefix, "%s_%s", __pre, server_str);
+			snprintf(file_prefix, "%s_%s", __pre, server_str);
 		}
 		
 		if (__cap/(long)ONE_TB == 0) {
-			sprintf(file_prefix, "%s_[%s_%ldGB]", file_prefix, __dev, __cap/(long)ONE_GB);
+			snprintf(file_prefix, "%s_[%s_%ldGB]", file_prefix, __dev, __cap/(long)ONE_GB);
 		}
 		else {
-			sprintf(file_prefix, "%s_[%s_%.2fTB]", file_prefix, __dev, __cap/(double)ONE_TB);
+			snprintf(file_prefix, "%s_[%s_%.2fTB]", file_prefix, __dev, __cap/(double)ONE_TB);
 		}
 		
 		for (int i=0; i<args_count; i++) {
 			if ((option_check(i, AO_APPEAR) && args[i].status == SUCCESS)||option_check(i, AO_DISPLAY)) {
 				if (strcmp(options[i].arg, ARG_BOOL)==0) {
-					sprintf(file_prefix, "%s_[%s_%d]", file_prefix, options[i].name, args[i].v_bool);
+					snprintf(file_prefix, "%s_[%s_%d]", file_prefix, options[i].name, args[i].v_bool);
 				}
 				else {
-					sprintf(file_prefix, "%s_[%s_%s]", file_prefix, options[i].name, args[i].v_str);
+					snprintf(file_prefix, "%s_[%s_%s]", file_prefix, options[i].name, args[i].v_str);
 				}	
 			}
 		}
 		
 		id = 0;
 		strrmv(file_prefix, '/');
-		sprintf(__path, "%s_[exp_%d].csv", file_prefix, id);
+		snprintf(__path, "%s_[exp_%d].csv", file_prefix, id);
 		while (access(__path, F_OK) != -1) {
 			id++;
-			sprintf(__path, "%s_[exp_%d].csv", file_prefix, id);
+			snprintf(__path, "%s_[exp_%d].csv", file_prefix, id);
 		}
 		
 		return fopen(__path, "w+");
@@ -655,7 +655,7 @@ long nvme_flush(const char * __dev, int __enable, const struct timespec * __time
 	if (__dev != NULL) {
 		const char * tmp_path__ = "flush.tmp";
 		
-		sprintf(flush_cmd, "nvme flush %s > %s", __dev, tmp_path__);
+		snprintf(flush_cmd, "nvme flush %s > %s", __dev, tmp_path__);
 		
 		return 0;
 	}
@@ -686,11 +686,11 @@ long device_flush(const char * __dev, int __enable, const struct timespec * __ti
 		
 		if ((type__=get_device_type(__dev)) == DEVICE_NVME) {
 
-			sprintf(flush_cmd, "nvme flush %s > %s", __dev, tmp_path__);
+			snprintf(flush_cmd, "nvme flush %s > %s", __dev, tmp_path__);
 		}
 		else if (type__ == DEVICE_SATA) {
 
-			sprintf(flush_cmd, "hdparm -F %s > %s", __dev, tmp_path__);
+			snprintf(flush_cmd, "hdparm -F %s > %s", __dev, tmp_path__);
 		}
 		else {
 			return DEVICE_ERROR;
@@ -829,7 +829,7 @@ int get_sata_stat(const char* __dev, int __fd, char* __name, long* __cap) {
 				strcpy(__name, str_list__[start_pos__]);
 
 				for (int i=start_pos__+1; i<len__-2; i++) {
-					sprintf(__name, "%s %s", __name, str_list__[i]);
+					snprintf(__name, "%s %s", __name, str_list__[i]);
 				}
 
 				fclose(spec_file__);
@@ -882,7 +882,7 @@ int get_sata_path(char* __name) {
 			strcpy(comp__, str_list__[start_pos__]);
 
 			for (int i=start_pos__+1; i<len__-2; i++) {
-				sprintf(comp__, "%s %s", comp__, str_list__[i]);
+				snprintf(comp__, "%s %s", comp__, str_list__[i]);
 			}
 
 			if (strcmp(__name, comp__) == 0) {
@@ -909,7 +909,7 @@ int get_nvme_stat(const char* __dev, char* __name, long * __cap) {
 
 	if (access(py_path__, F_OK) != -1) {
 
-		sprintf(cmd__, "python3 %s %s > %s", py_path__, __dev, tmp_path__);
+		snprintf(cmd__, "python3 %s %s > %s", py_path__, __dev, tmp_path__);
 		if (system(cmd__) == -1) {
 			return FAILED;
 		}
@@ -959,7 +959,7 @@ int get_nvme_path(char* __model) {
 
 	if (access(py_path__, F_OK) != -1) {
 
-		sprintf(cmd__, "python3 %s \'%s\' > %s", py_path__, __model, tmp_path__);
+		snprintf(cmd__, "python3 %s \'%s\' > %s", py_path__, __model, tmp_path__);
 		if (system(cmd__) == -1) {
 			return FAILED;
 		}
@@ -1043,7 +1043,7 @@ int save_base_offset(const char *__dev, long __offset) {
 
 	FILE *tmp_file__, *config_file__;
 
-	sprintf(tmp_path__, "%s.tmp", config_path__);
+	snprintf(tmp_path__, "%s.tmp", config_path__);
 	if (rename(config_path__, tmp_path__) != 0) {
 		return FILE_HANDLING_ERROR;
 	}
@@ -1060,7 +1060,7 @@ int save_base_offset(const char *__dev, long __offset) {
 		token = strtok(to_split__, delim__);
 		if (strcmp(token, __dev) == 0) {
 
-			sprintf(line__, "%s,%ld", __dev, __offset);
+			snprintf(line__, "%s,%ld", __dev, __offset);
 		}
 
 		fprintf(config_file__, "%s\n", line__);
